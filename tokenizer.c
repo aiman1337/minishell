@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohaben- <mohaben-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 12:40:09 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/08 14:27:35 by mohaben-         ###   ########.fr       */
+/*   Updated: 2025/03/10 19:56:35 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,26 @@ void	ft_token_node_free(t_token_node **head)
 	free(head);
 }
 
+int is_operator(char c)
+{
+    return (c == '|' || c == '<' || c == '>' || c == '&' || c == '(' || c == ')');
+}
+
+int is_whitespace(char c)
+{
+    return (c == ' ' || c == '\t' || c == '\n');
+}
+
 static void	ft_handle_str(char *input, int *i, t_token_node **head, t_token_node **current)
 {
 	int		start;
 	char	*str;
 
 	start = *i;
-	while (input[*i] && input[*i] != '|' && input[*i] != '<' && input[*i] != '>')
+	while (input[*i] && !is_operator(input[*i]) && !is_whitespace(input[*i]))
 		(*i)++;
 	str = ft_substr(input, start, *i - start);
-	if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
+	if (is_operator(input[*i]))
 		(*i)--;
 	ft_add_token(head, current, token_cmd, str);
 	free(str);
@@ -72,21 +82,42 @@ t_token_node	*ft_tokenize(char *input)
 	i = 0;
 	while (input && input[i])
 	{
-		while (input[i] && (input[i] == ' ' || input[i] == '\t'))
+		while (input[i] && is_whitespace(input[i]))
 			i++;
-		if (input[i] == '|')
-			ft_add_token(&head, &current, token_pipe, "|");
-		else if (input[i] == '<' && input[i + 1] == '<')
-			ft_add_token(&head, &current, token_hrdc, "<<");
-		else if (input[i] == '>' && input[i + 1] == '>')
-			ft_add_token(&head, &current, token_appnd, ">>");
-		else if (input[i] == '<')
-			ft_add_token(&head, &current, token_in, "<");
-		else if (input[i] == '>')
-			ft_add_token(&head, &current, token_out, ">");
-		else
-			ft_handle_str(input, &i, &head, &current);
-		i++;
+		
+			if (input[i] == '|' && input[i + 1] == '|')
+			{
+				ft_add_token(&head, &current, token_or, "||");
+				i++;
+			}
+			else if (input[i] == '&' && input[i + 1] == '&')
+			{
+				ft_add_token(&head, &current, token_and, "&&");
+				i++;
+			}
+			else if (input[i] == '<' && input[i + 1] == '<')
+			{
+				ft_add_token(&head, &current, token_hrdc, "<<");
+				i++;
+			}
+			else if (input[i] == '>' && input[i + 1] == '>')
+			{
+				ft_add_token(&head, &current, token_appnd, ">>");
+				i++;
+			}
+			else if (input[i] == '(')
+				ft_add_token(&head, &current, token_paren_open, "(");
+			else if (input[i] == ')')
+				ft_add_token(&head, &current, token_paren_close, ")");
+			else if (input[i] == '|')
+				ft_add_token(&head, &current, token_pipe, "|");
+			else if (input[i] == '<')
+				ft_add_token(&head, &current, token_in, "<");
+			else if (input[i] == '>')
+				ft_add_token(&head, &current, token_out, ">");
+			else
+				ft_handle_str(input, &i, &head, &current);
+			i++;
 	}
 	return (head);
 }

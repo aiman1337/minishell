@@ -35,6 +35,15 @@ void print_token_type(t_token_type type)
     case token_appnd:
         printf("Append: ");
         break;
+	case token_or:
+        printf("OR: ");
+        break;
+	case token_paren_open:
+        printf("Open: ");
+        break;
+	case token_paren_close:
+        printf("Close: ");
+        break;
     default:
         printf("Unknown token type: ");
         break;
@@ -134,6 +143,7 @@ int main(int ac, char **av, char **envp)
 		}
 		t_token_node *tokens = ft_tokenize(input);
 		print_tokens(tokens);
+		// (void)tokens;
 		if (!ft_strncmp(input, "exit", 4))
 		{
 			char	**splited_cmd = ft_split(input, ' ');

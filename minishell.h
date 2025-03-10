@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohaben- <mohaben-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 12:33:01 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/08 13:33:21 by mohaben-         ###   ########.fr       */
+/*   Updated: 2025/03/10 17:08:02 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,16 @@
 
 typedef enum e_token_type
 {
-	token_cmd,
 	token_pipe,
+	token_cmd,
 	token_in,
 	token_out,
+	token_or,
+	token_and,
 	token_hrdc,
-	token_appnd
+	token_appnd,
+	token_paren_open,
+	token_paren_close,
 }	t_token_type;
 
 typedef struct s_token_node
