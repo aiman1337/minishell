@@ -98,23 +98,23 @@ int	ft_is_syntax_error(char *input, int *i)
 	return (0);
 }
 
-static void	ft_hanlde_input_error(char *input, int *last_exit_status)
-{
-	int	i;
+// static void	ft_hanlde_input_error(char *input, int *last_exit_status)
+// {
+// 	int	i;
 
-	i = 0;
-	if (!input || input[0] == '\0')
-		return ;
-	while (input[i])
-	{
-		if (ft_is_syntax_error(input, &i))
-		{
-			*last_exit_status = 258;
-			return ;
-		}
-		i++;
-	}
-}
+// 	i = 0;
+// 	if (!input || input[0] == '\0')
+// 		return ;
+// 	while (input[i])
+// 	{
+// 		if (ft_is_syntax_error(input, &i))
+// 		{
+// 			*last_exit_status = 258;
+// 			return ;
+// 		}
+// 		i++;
+// 	}
+// }
 
 int main(int ac, char **av, char **envp)
 {
@@ -132,7 +132,7 @@ int main(int ac, char **av, char **envp)
 	while (1)
 	{
 		input = readline("minishell> ");
-		ft_hanlde_input_error(input, &last_exit_status);
+		// ft_hanlde_input_error(input, &last_exit_status);
 		if (input && *input)
 			add_history(input);
 		if (!input)
@@ -143,7 +143,6 @@ int main(int ac, char **av, char **envp)
 		}
 		t_token_node *tokens = ft_tokenize(input);
 		print_tokens(tokens);
-		// (void)tokens;
 		if (!ft_strncmp(input, "exit", 4))
 		{
 			char	**splited_cmd = ft_split(input, ' ');
