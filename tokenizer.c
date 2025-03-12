@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 12:40:09 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/11 15:49:51 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/12 11:57:09 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,12 @@ int is_whitespace(char c)
     return (c == ' ' || c == '\t' || c == '\n');
 }
 
-static void ft_handle_quotes(char *input, int *i, t_token_node **head, t_token_node **current)
+int	is_quotes(char c)
+{
+	return (c == '"' || c == '\'');
+}
+
+static void ft_handle_quotes(char *input, int *i, t_token_node **head, t_token_node **current, int *error)
 {
     int start;
     char *str;
@@ -74,12 +79,13 @@ static void ft_handle_quotes(char *input, int *i, t_token_node **head, t_token_n
 		if (quote_type == '"')
             ft_add_token(head, current, token_dquote, str);
 		else
-        	ft_add_token(head, current, token_cmd, str);
+        	ft_add_token(head, current, token_squote, str);
         free(str);
     }
     else
 	{
-        write(1, "Error: Unclosed quote\n", 22);
+        write(2, "Error: Unclosed quote\n", 22);
+		*error = 1;
 	}
 }
 
@@ -89,10 +95,10 @@ static void	ft_handle_str(char *input, int *i, t_token_node **head, t_token_node
 	char	*str;
 
 	start = *i;
-	while (input[*i] && !is_operator(input[*i]) && !is_whitespace(input[*i]))
+	while (input[*i] && !is_operator(input[*i]) && !is_whitespace(input[*i]) && !is_quotes(input[*i]))
 		(*i)++;
 	str = ft_substr(input, start, *i - start);
-	if (is_operator(input[*i]))
+	if (is_operator(input[*i]) || is_quotes(input[*i]))
 		(*i)--;
 	ft_add_token(head, current, token_cmd, str);
 	free(str);
@@ -103,10 +109,12 @@ t_token_node	*ft_tokenize(char *input)
 	t_token_node	*head;
 	t_token_node	*current;
 	int				i;
+	int				error;
 
+	i = 0;
+	error = 0;
 	head = NULL;
 	current = NULL;
-	i = 0;
 	while (input && input[i])
 	{
 		
@@ -116,8 +124,9 @@ t_token_node	*ft_tokenize(char *input)
 			// // Check for quotes
         	if (input[i] == '"' || input[i] == '\'')
         	{
-            	ft_handle_quotes(input, &i, &head, &current);
-            	i--;
+            	ft_handle_quotes(input, &i, &head, &current, &error);
+				if (error)
+					break;
         	}
 			// Check for operators
 			else if (input[i] == '|' && input[i + 1] == '|')

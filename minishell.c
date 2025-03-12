@@ -44,6 +44,15 @@ void print_token_type(t_token_type type)
 	case token_paren_close:
         printf("Close: ");
         break;
+	case token_dquote:
+        printf("double quotes: ");
+        break;
+	case token_squote:
+        printf("single quotes: ");
+        break;
+	case token_wildcard:
+        printf("wildcard: ");
+        break;
     default:
         printf("Unknown token type: ");
         break;
