@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 12:33:01 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/12 11:20:55 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/12 15:18:46 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef enum e_token_type
 	token_appnd,
 	token_dquote,
 	token_squote,
+	token_and_and,
 	token_wildcard,
 	token_paren_open,
 	token_paren_close,
