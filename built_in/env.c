@@ -1,27 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   environment.c                                      :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohaben- <mohaben-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/10 17:14:58 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/11 11:07:42 by mohaben-         ###   ########.fr       */
+/*   Created: 2025/03/12 16:42:55 by mohaben-          #+#    #+#             */
+/*   Updated: 2025/03/13 16:44:09 by mohaben-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 t_env	*ft_env_new(char *var, char *value)
 {
 	t_env	*new;
+	char	quote;
 
 	new = malloc(sizeof(t_env));
 	if (!new)
 		return (NULL);
 	new->var = ft_strdup(var);
 	if (value)
-		new->value = ft_strdup(value);
+	{
+		if (value[0] == '\'' || value[0] == '"')
+		{
+			quote = value[0];
+			value = ft_strtrim(value, &quote);
+		}
+		else
+			value = ft_strdup(value);
+		new->value = value;
+	}
 	else
 		new->value = ft_strdup("");
 	new->next = NULL;
@@ -48,10 +58,23 @@ void	ft_env_add_back(t_env **lst, t_env *new)
 t_env	*ft_init_env(char **envp)
 {
 	t_env	*head;
+	char	*pwd;
 	char	**envp_splited;
+	char	*last_exec;
 
-	if (!envp || !*envp)
+	if (!envp)
 		return (NULL);
+	if (!*envp)
+	{
+		pwd = getcwd(NULL, 0);
+		last_exec = ft_strjoin(pwd, "./minishell");
+		head = ft_env_new("PWD", pwd);
+		ft_env_add_back(&head, ft_env_new("SHLVL", "1"));
+		ft_env_add_back(&head, ft_env_new("_", last_exec));
+		free(pwd);
+		free(last_exec);
+		return (head);
+	}
 	head = NULL;
 	while (*envp)
 	{
