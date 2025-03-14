@@ -71,60 +71,6 @@ void print_tokens(t_token_node *tokens)
     }
 }
 
-static void	print_token_error(char token)
-{
-	write(1, "minishell: syntax error near unexpected token `", 47);
-	write(1, &token, 1);
-	write(1, "'\n", 2);
-}
-
-int	ft_is_syntax_error(char *input, int *i)
-{
-	char	current;
-	int 	j;
-
-	while (input[*i] && (input[*i] == ' ' || input[*i] == '\t'))
-		(*i)++;
-	if (input[*i] == '|' && (*i == 0 || input[*i-1] == '|' || (input[*i-1] == ' ' && input[*i-2] == '|')))
-	{
-		print_token_error('|');
-		return (1);
-	}
-	if (input[*i] == '<' || input[*i] == '>')
-	{
-		current = input[*i];
-		if (input[*i + 1] == current)
-			(*i)++;
-		j = *i + 1;
-		while (input[j] && (input[j] == ' ' || input[j] == '\t'))
-			j++;
-		if (!input[j] || input[j] == '|' || input[j] == '<' || input[j] == '>')
-		{
-			print_token_error(input[j] ? input[j] : current);
-			return (1);
-		}
-	}
-	return (0);
-}
-
-// static void	ft_hanlde_input_error(char *input, int *last_exit_status)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	if (!input || input[0] == '\0')
-// 		return ;
-// 	while (input[i])
-// 	{
-// 		if (ft_is_syntax_error(input, &i))
-// 		{
-// 			*last_exit_status = 258;
-// 			return ;
-// 		}
-// 		i++;
-// 	}
-// }
-
 int main(int ac, char **av, char **envp)
 {
 	char	*input;
@@ -134,11 +80,9 @@ int main(int ac, char **av, char **envp)
 	(void)envp;
 	signal(SIGINT, ft_handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
-	rl_catch_signals = 0;
 	while (1)
 	{
-		input = readline("minishell> ");
-		// ft_hanlde_input_error(input, &last_exit_status);
+		input = readline("\033[1;32mminishell> \033[0m");
 		if (input && *input)
 			add_history(input);
 		if (!input)
@@ -149,9 +93,7 @@ int main(int ac, char **av, char **envp)
 		}
 		t_token_node *tokens = ft_tokenize(input);
 		if (tokens)
-		{
 			print_tokens(tokens);
-		}
 		if (!ft_strncmp(input, "exit", 4))
 			exit(0);
 		free(input);
