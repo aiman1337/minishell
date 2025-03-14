@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 12:33:01 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/12 15:18:46 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/14 21:10:17 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,43 @@ typedef struct s_ast
 	struct s_ast	*right;
 }	t_ast;
 
+// #######################
+
+typedef struct s_redirect
+{
+    int type;              // token_in, token_out, token_hrdc, token_appnd
+    char *file;            // Filename or delimiter
+    struct s_redirect *next;
+} t_redirect;
+
+typedef struct s_ast_node
+{
+    enum {
+        AST_COMMAND,       // Simple command with args
+        AST_PIPE,          // Pipe operator
+        AST_AND_AND,       // && operator
+        AST_OR_OR,         // || operator
+        AST_SUBSHELL       // Commands in parentheses
+    } type;
+    
+    // For command nodes
+    char **args;           // Command and its arguments
+    int arg_count;         // Number of arguments
+    
+    // For redirection
+    t_redirect *redirects; // List of redirections for this command
+    
+    // For binary operations (pipe, &&, ||)
+    struct s_ast_node *left;
+    struct s_ast_node *right;
+    
+    // For subshell commands
+    struct s_ast_node *child;
+} t_ast_node;
+
+
+
+
 char	*get_next_line(int fd);
 size_t	ft_strlen(char *s);
 int		ft_isdigit(char c);
@@ -77,5 +114,28 @@ void	ft_exec_cmd(char *cmd, char **envp);
 
 int	ft_strcmp(const char *s1, const char *s2);
 t_token_node	*ft_tokenize(char *input);
+
+
+
+
+
+t_ast_node *build_ast(t_token_node *tokens);
+t_ast_node *parse_logical_ops(t_token_node *tokens);
+t_ast_node *parse_pipes(t_token_node *tokens);
+t_ast_node *parse_command(t_token_node *tokens);
+t_ast_node *parse_subshell(t_token_node *tokens);
+t_token_node *find_op_at_level(t_token_node *tokens, t_token_type type1, t_token_type type2);
+t_token_node *find_token_at_level(t_token_node *tokens, t_token_type type);
+t_token_node *extract_tokens(t_token_node *start, t_token_node *end);
+t_ast_node *create_ast_node(int type);
+t_redirect *parse_redirections(t_token_node **tokens);
+void free_ast(t_ast_node *ast);
+int is_redirection(t_token_type type);
+int count_args(t_token_node *tokens);
+int token_list_len(t_token_node *tokens);
+char **collect_args(t_token_node *tokens, int count);
+void print_ast(t_ast_node *ast, int indent_level);
+
+
 
 #endif

@@ -5,7 +5,7 @@ CFLAGS = -Wall -Werror -Wextra
 LIB_RL = -L/goinfre/ahouass/homebrew/opt/readline/lib -lreadline
 INCLUDE_RL = -I/goinfre/ahouass/homebrew/opt/readline/include
 
-SRC = minishell.c get_next_line.c str_utils.c utils.c ft_split.c execution.c  errors.c tokenizer.c
+SRC = minishell.c get_next_line.c str_utils.c utils.c ft_split.c execution.c  errors.c tokenizer.c ft_tree.c
 
 OBJ = $(SRC:.c=.o)
 

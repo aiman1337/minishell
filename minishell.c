@@ -96,6 +96,12 @@ int main(int ac, char **av, char **envp)
 			print_tokens(tokens);
 		if (!ft_strncmp(input, "exit", 4))
 			exit(0);
+        t_ast_node *ast = build_ast(tokens);
+        if (ast)
+        {
+            printf("AST Structure:\n");
+            print_ast(ast, 0);
+        }
 		free(input);
 	}
 	return (0);
