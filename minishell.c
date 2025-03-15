@@ -12,7 +12,6 @@ void	ft_clear_screen()
 	write(1, "\nminishell> ", 12);
 }
 
-
 void print_token_type(t_token_type type)
 {
     switch (type)
