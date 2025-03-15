@@ -6,7 +6,7 @@
 /*   By: mohaben- <mohaben-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 12:33:01 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/13 13:23:00 by mohaben-         ###   ########.fr       */
+/*   Updated: 2025/03/15 12:19:34 by mohaben-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <stdio.h>
+# include <string.h>
 # include <stdlib.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
@@ -27,12 +28,20 @@
 
 typedef enum e_token_type
 {
-	token_cmd,
 	token_pipe,
+	token_cmd,
 	token_in,
 	token_out,
+	token_or,
+	token_and,
 	token_hrdc,
-	token_appnd
+	token_appnd,
+	token_dquote,
+	token_squote,
+	token_and_and,
+	token_wildcard,
+	token_paren_open,
+	token_paren_close,
 }	t_token_type;
 
 typedef struct s_token_node
@@ -42,6 +51,13 @@ typedef struct s_token_node
 	struct s_token_node	*next;
 }	t_token_node;
 
+typedef struct s_env
+{
+	char			*var;
+	char			*value;
+	struct s_env	*next;
+}	t_env;
+
 typedef struct s_ast
 {
 	t_token_type	token;
@@ -49,13 +65,39 @@ typedef struct s_ast
 	struct s_ast	*left;
 	struct s_ast	*right;
 }	t_ast;
-
-typedef struct s_env
+typedef struct s_redirect
 {
-	char			*var;
-	char			*value;
-	struct s_env	*next;
-}	t_env;
+    int type;              // token_in, token_out, token_hrdc, token_appnd
+    char *file;            // Filename or delimiter
+    struct s_redirect *next;
+} t_redirect;
+
+
+typedef struct s_ast_node
+{
+    enum {
+        AST_COMMAND,       // Simple command with args
+        AST_PIPE,          // Pipe operator
+        AST_AND_AND,       // && operator
+        AST_OR_OR,         // || operator
+        AST_SUBSHELL       // Commands in parentheses
+    } type;
+    
+    // For command nodes
+    char **args;           // Command and its arguments
+    int arg_count;         // Number of arguments
+    
+    // For redirection
+    t_redirect *redirects; // List of redirections for this command
+    
+    // For binary operations (pipe, &&, ||)
+    struct s_ast_node *left;
+    struct s_ast_node *right;
+    
+    // For subshell commands
+    struct s_ast_node *child;
+} t_ast_node;
+
 
 char	*get_next_line(int fd);
 size_t	ft_strlen(char *s);
@@ -95,5 +137,28 @@ void	ft_pwd(t_env *env);
 void	ft_echo(char *input);
 
 t_token_node	*ft_tokenize(char *input);
+
+
+
+
+
+t_ast_node *build_ast(t_token_node *tokens);
+t_ast_node *parse_logical_ops(t_token_node *tokens);
+t_ast_node *parse_pipes(t_token_node *tokens);
+t_ast_node *parse_command(t_token_node *tokens);
+t_ast_node *parse_subshell(t_token_node *tokens);
+t_token_node *find_op_at_level(t_token_node *tokens, t_token_type type1, t_token_type type2);
+t_token_node *find_token_at_level(t_token_node *tokens, t_token_type type);
+t_token_node *extract_tokens(t_token_node *start, t_token_node *end);
+t_ast_node *create_ast_node(int type);
+t_redirect *parse_redirections(t_token_node **tokens);
+void free_ast(t_ast_node *ast);
+int is_redirection(t_token_type type);
+int count_args(t_token_node *tokens);
+int token_list_len(t_token_node *tokens);
+char **collect_args(t_token_node *tokens, int count);
+void print_ast(t_ast_node *ast, int indent_level);
+
+
 
 #endif
