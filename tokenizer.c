@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 12:40:09 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/15 14:24:38 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/15 14:28:42 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,7 +282,6 @@ void	ft_consecutive_operators(t_token_node *list, int *error)
 {
 	t_token_node	*head;
 	head = list;
-
 	while (list->next)
 	{
 		
@@ -368,6 +367,12 @@ t_token_node	*ft_tokenize(char *input)
 				ft_add_token(&head, &current, token_or, "||");
 				i++;
 			}
+			else if (input[i] == '&' && (!input[i + 1] || is_whitespace(input[i + 1])))
+			{
+				write(2, "syntax error near unexpected token `&'\n", 39);
+				ft_token_node_free(&head);
+        		return (NULL);
+			}
 			else if (input[i] == '&' && input[i + 1] == '&')
 			{
 				ft_add_token(&head, &current, token_and_and, "&&");
@@ -393,8 +398,6 @@ t_token_node	*ft_tokenize(char *input)
 				ft_add_token(&head, &current, token_in, "<");
 			else if (input[i] == '>')
 				ft_add_token(&head, &current, token_out, ">");
-			else if (input[i] == '&')
-				ft_add_token(&head, &current, token_and, "&");
 			else if (input[i])
 				ft_handle_str(input, &i, &head, &current);
 			i++;
