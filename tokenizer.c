@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 12:40:09 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/14 15:20:50 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/15 11:21:21 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,14 @@ void	ft_valid_parentesis(t_token_node *list, int *error)
 		}
     	else if (list->type == token_paren_open)
         	paren_count++;
+		else if (list->type == token_paren_close && list->next && (list->next->type == token_cmd || list->next->type == token_dquote || list->next->type == token_squote))
+		{
+			write(2, "syntax error near unexpected token `", 37);
+				write(2, list->next->data, ft_strlen(list->next->data));
+				write(2, "'\n", 2);
+            	*error = 1;
+            	return;
+		}
     	else if (list->type == token_paren_close)
     	{
         	paren_count--;
@@ -223,6 +231,14 @@ void	ft_valid_redirections(t_token_node *list, int *error)
 			{
 				write(2, "syntax error near unexpected token `", 37);
 				write(2, list->next->data, ft_strlen(list->next->data));
+				write(2, "'\n", 2);
+				*error = 1;
+				return ;
+			}
+			if ((*(list->data) == '>' ||  *(list->data) == '<') && list->next && list->next->next && (list->next->next->type == token_cmd  ||  list->next->next->type == token_dquote || list->next->next->type == token_squote))
+			{
+				write(2, "syntax error near unexpected token `", 37);
+				write(2, list->next->next->data, ft_strlen(list->next->next->data));
 				write(2, "'\n", 2);
 				*error = 1;
 				return ;
