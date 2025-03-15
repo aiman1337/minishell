@@ -2,8 +2,8 @@ NAME = minishell
 
 CC = cc
 CFLAGS = -Wall -Werror -Wextra
-LIB_RL = -L/goinfre/ahouass/homebrew/opt/readline/lib -lreadline
-INCLUDE_RL = -I/goinfre/ahouass/homebrew/opt/readline/include
+LIB_RL = -L/goinfre/mohaben-/homebrew/opt/readline/lib -lreadline
+INCLUDE_RL = -I/goinfre/mohaben-/homebrew/opt/readline/include
 
 SRC = minishell.c tokenizer.c ft_tree.c \
 		built_in/cd.c built_in/export.c built_in/env.c built_in/unset.c  built_in/exit.c built_in/pwd.c built_in/echo.c \
