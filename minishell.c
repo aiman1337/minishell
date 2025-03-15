@@ -3,13 +3,13 @@
 void	ft_handle_sigint(int sig)
 {
  	(void)sig;
-	write(1, "\nminishell> ", 12);
+	ft_putstr_fd("\n\033[1;32mminishell> \033[0m", 1);
 }
 
 void	ft_clear_screen()
 {
-	write(1, "\033[H\033[2J", 7);
-	write(1, "\nminishell> ", 12);
+	ft_putstr_fd("\033[H\033[2J", 1);
+	ft_putstr_fd("\n\033[1;32mminishell> \033[0m", 1);
 }
 
 

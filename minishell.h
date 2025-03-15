@@ -6,7 +6,7 @@
 /*   By: mohaben- <mohaben-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 12:33:01 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/15 12:19:34 by mohaben-         ###   ########.fr       */
+/*   Updated: 2025/03/15 13:09:35 by mohaben-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <stdio.h>
-# include <string.h>
 # include <stdlib.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
@@ -33,7 +32,6 @@ typedef enum e_token_type
 	token_in,
 	token_out,
 	token_or,
-	token_and,
 	token_hrdc,
 	token_appnd,
 	token_dquote,
@@ -58,13 +56,7 @@ typedef struct s_env
 	struct s_env	*next;
 }	t_env;
 
-typedef struct s_ast
-{
-	t_token_type	token;
-	char			*data;
-	struct s_ast	*left;
-	struct s_ast	*right;
-}	t_ast;
+
 typedef struct s_redirect
 {
     int type;              // token_in, token_out, token_hrdc, token_appnd
@@ -136,28 +128,24 @@ void	ft_set_val_env(t_env *env, char *var, char *new_val);
 void	ft_pwd(t_env *env);
 void	ft_echo(char *input);
 
+
 t_token_node	*ft_tokenize(char *input);
-
-
-
-
-
-t_ast_node *build_ast(t_token_node *tokens);
-t_ast_node *parse_logical_ops(t_token_node *tokens);
-t_ast_node *parse_pipes(t_token_node *tokens);
-t_ast_node *parse_command(t_token_node *tokens);
-t_ast_node *parse_subshell(t_token_node *tokens);
-t_token_node *find_op_at_level(t_token_node *tokens, t_token_type type1, t_token_type type2);
-t_token_node *find_token_at_level(t_token_node *tokens, t_token_type type);
-t_token_node *extract_tokens(t_token_node *start, t_token_node *end);
-t_ast_node *create_ast_node(int type);
-t_redirect *parse_redirections(t_token_node **tokens);
-void free_ast(t_ast_node *ast);
-int is_redirection(t_token_type type);
-int count_args(t_token_node *tokens);
-int token_list_len(t_token_node *tokens);
-char **collect_args(t_token_node *tokens, int count);
-void print_ast(t_ast_node *ast, int indent_level);
+t_ast_node		*build_ast(t_token_node *tokens);
+t_ast_node		*parse_logical_ops(t_token_node *tokens);
+t_ast_node		*parse_pipes(t_token_node *tokens);
+t_ast_node		*parse_command(t_token_node *tokens);
+t_ast_node		*parse_subshell(t_token_node *tokens);
+t_token_node	*find_op_at_level(t_token_node *tokens, t_token_type type1, t_token_type type2);
+t_token_node	*find_token_at_level(t_token_node *tokens, t_token_type type);
+t_token_node	*extract_tokens(t_token_node *start, t_token_node *end);
+t_ast_node		*create_ast_node(int type);
+t_redirect		*parse_redirections(t_token_node **tokens);
+void			free_ast(t_ast_node *ast);
+int 			is_redirection(t_token_type type);
+int 			count_args(t_token_node *tokens);
+int 			token_list_len(t_token_node *tokens);
+char 			**collect_args(t_token_node *tokens, int count);
+void 			print_ast(t_ast_node *ast, int indent_level);
 
 
 

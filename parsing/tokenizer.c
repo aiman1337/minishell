@@ -6,11 +6,11 @@
 /*   By: mohaben- <mohaben-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 12:40:09 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/15 12:29:08 by mohaben-         ###   ########.fr       */
+/*   Updated: 2025/03/15 13:13:34 by mohaben-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 void	ft_add_token(t_token_node **head, t_token_node **current, t_token_type type, char *data)
 {
@@ -356,6 +356,12 @@ t_token_node	*ft_tokenize(char *input)
 				ft_add_token(&head, &current, token_or, "||");
 				i++;
 			}
+			else if (input[i] == '&' && (!input[i + 1] || is_whitespace(input[i + 1])))
+			{
+				ft_putstr_fd("syntax error near unexpected token `&'\n", 2);
+				ft_token_node_free(&head);
+				return (NULL);
+			}
 			else if (input[i] == '&' && input[i + 1] == '&')
 			{
 				ft_add_token(&head, &current, token_and_and, "&&");
@@ -381,8 +387,6 @@ t_token_node	*ft_tokenize(char *input)
 				ft_add_token(&head, &current, token_in, "<");
 			else if (input[i] == '>')
 				ft_add_token(&head, &current, token_out, ">");
-			else if (input[i] == '&')
-				ft_add_token(&head, &current, token_and, "&");
 			else if (input[i])
 				ft_handle_str(input, &i, &head, &current);
 			i++;
