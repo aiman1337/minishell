@@ -86,7 +86,7 @@ int main(int ac, char **av, char **envp)
 	env = ft_init_env(envp);
 	signal(SIGINT, ft_handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
-	rl_catch_signals = 0;
+	// rl_catch_signals = 0;
 	while (1)
 	{
 		input = readline("\033[1;32mminishell> \033[0m");
