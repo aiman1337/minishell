@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 12:33:01 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/15 14:29:39 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/17 14:52:52 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,9 @@ typedef struct s_ast_node
         AST_PIPE,          // Pipe operator
         AST_AND_AND,       // && operator
         AST_OR_OR,         // || operator
-        AST_SUBSHELL       // Commands in parentheses
+        AST_SUBSHELL,	   // Commands in parentheses
+		AST_DQUOTES,       // Double quoted string
+        AST_SQUOTES        // Single quoted string
     } type;
     
     // For command nodes
@@ -96,7 +98,8 @@ typedef struct s_ast_node
     // For binary operations (pipe, &&, ||)
     struct s_ast_node *left;
     struct s_ast_node *right;
-    
+    int *arg_quote_types;  // New field to track quote types for each argument
+
     // For subshell commands
     struct s_ast_node *child;
 } t_ast_node;
@@ -159,7 +162,7 @@ void free_ast(t_ast_node *ast);
 int is_redirection(t_token_type type);
 int count_args(t_token_node *tokens);
 int token_list_len(t_token_node *tokens);
-char **collect_args(t_token_node *tokens, int count);
+char **collect_args(t_token_node *tokens, int count, int **quote_types);
 void print_ast(t_ast_node *ast, int indent_level);
 
 

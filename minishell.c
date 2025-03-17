@@ -75,9 +75,9 @@ void print_tokens(t_token_node *tokens)
 int main(int ac, char **av, char **envp)
 {
 	char	*input;
-	int		pid;
+	// int		pid;
 	int		exit_status;
-	int		status;
+	// int		status;
 	t_env	*env;
 
 	(void)ac;
@@ -115,46 +115,57 @@ int main(int ac, char **av, char **envp)
 		if (tokens)
 			print_tokens(tokens);
         t_ast_node *ast = build_ast(tokens);
-        if (ast)
-        {
-            printf("AST Structure:\n");
-            print_ast(ast, 0);
-		}
-		else if (!ft_strncmp(input, "echo $?", 7))
-			printf("%d\n", exit_status);
-		else if (!ft_strncmp(input, "echo", 4))
-			ft_echo(input);
-		else if (!ft_strncmp(input, "cd", 2))
-			ft_cd(input, env, &exit_status);
-		else if (!ft_strncmp(input, "export", 6))
-			ft_export(input, &env);
-		else if (!ft_strncmp(input, "unset", 5))
-			ft_unset(input, &env);
-		else if (!ft_strncmp(input, "env", 3))
-			ft_print_env(env);
-		else if (!ft_strncmp(input, "pwd", 3))
-			ft_pwd(env);
-		else
-		{
-			pid = fork();
-			if (pid == 0)
-			{
-				ft_exec_cmd(input, env);
-			}
-			else if (pid > 0)
-			{
-				waitpid(pid, &status, 0);
-				if (WIFEXITED(status))
-					exit_status = WEXITSTATUS(status);
-				else
-					exit_status = 1;
-			}
-			else
-			{
-				write(2, "Fork error\n", 11);
-				exit_status = 1;
-			}
-		}
+        // if (ast)
+        // {
+        //     printf("AST Structure:\n");
+        //     print_ast(ast, 0);
+		// }
+		int i = 0;
+	while (ast->args[i])
+	{
+    	if (ast->arg_quote_types[i] == AST_DQUOTES)
+        	printf("-\"%s\" (double quoted)-\n", ast->args[i]);
+    	else if (ast->arg_quote_types[i] == AST_SQUOTES)
+        	printf("-'%s' (single quoted)-\n", ast->args[i]);
+    	else
+        	printf("-%s-\n", ast->args[i]);
+    	i++;
+	}
+		// else if (!ft_strncmp(input, "echo $?", 7))
+		// 	printf("%d\n", exit_status);
+		// else if (!ft_strncmp(input, "echo", 4))
+		// 	ft_echo(input);
+		// else if (!ft_strncmp(input, "cd", 2))
+		// 	ft_cd(input, env, &exit_status);
+		// else if (!ft_strncmp(input, "export", 6))
+		// 	ft_export(input, &env);
+		// else if (!ft_strncmp(input, "unset", 5))
+		// 	ft_unset(input, &env);
+		// else if (!ft_strncmp(input, "env", 3))
+		// 	ft_print_env(env);
+		// else if (!ft_strncmp(input, "pwd", 3))
+		// 	ft_pwd(env);
+		// else
+		// {
+		// 	pid = fork();
+		// 	if (pid == 0)
+		// 	{
+		// 		ft_exec_cmd(input, env);
+		// 	}
+		// 	else if (pid > 0)
+		// 	{
+		// 		waitpid(pid, &status, 0);
+		// 		if (WIFEXITED(status))
+		// 			exit_status = WEXITSTATUS(status);
+		// 		else
+		// 			exit_status = 1;
+		// 	}
+		// 	else
+		// 	{
+		// 		write(2, "Fork error\n", 11);
+		// 		exit_status = 1;
+		// 	}
+		// }
 		free(input);
 	}
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:58:14 by ahouass           #+#    #+#             */
-/*   Updated: 2025/03/14 21:41:13 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/17 14:51:39 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,6 @@ t_ast_node *parse_command(t_token_node *tokens)
         return NULL;
     
     t_ast_node *node = create_ast_node(AST_COMMAND);
-    // t_token_node *tmp = tokens;
     t_token_node *cmd_tokens = tokens;
     
     // Parse redirections first
@@ -150,8 +149,8 @@ t_ast_node *parse_command(t_token_node *tokens)
     
     if (arg_count > 0)
     {
-        // Collect command and arguments
-        node->args = collect_args(cmd_tokens, arg_count);
+        // Collect command and arguments with quote information
+        node->args = collect_args(cmd_tokens, arg_count, &node->arg_quote_types);
         node->arg_count = arg_count;
     }
     else
@@ -159,6 +158,7 @@ t_ast_node *parse_command(t_token_node *tokens)
         // No command, only redirections
         node->args = NULL;
         node->arg_count = 0;
+        node->arg_quote_types = NULL;
     }
     
     return node;
@@ -255,6 +255,7 @@ t_ast_node *create_ast_node(int type)
     node->type = type;
     node->args = NULL;
     node->arg_count = 0;
+    node->arg_quote_types = NULL;  // Initialize new field
     node->redirects = NULL;
     node->left = NULL;
     node->right = NULL;
@@ -347,11 +348,19 @@ int count_args(t_token_node *tokens)
 }
 
 /* Collect arguments into a string array */
-char **collect_args(t_token_node *tokens, int count)
+char **collect_args(t_token_node *tokens, int count, int **quote_types)
 {
     char **args = malloc(sizeof(char *) * (count + 1));
     if (!args)
         return NULL;
+    
+    // Allocate memory for quote types
+    *quote_types = malloc(sizeof(int) * count);
+    if (!(*quote_types))
+    {
+        free(args);
+        return NULL;
+    }
     
     int i = 0;
     t_token_node *tmp = tokens;
@@ -362,6 +371,15 @@ char **collect_args(t_token_node *tokens, int count)
             tmp->type == token_squote)
         {
             args[i] = strdup(tmp->data);
+            
+            // Store quote type information
+            if (tmp->type == token_dquote)
+                (*quote_types)[i] = AST_DQUOTES;
+            else if (tmp->type == token_squote)
+                (*quote_types)[i] = AST_SQUOTES;
+            else
+                (*quote_types)[i] = 0;  // No quotes
+            
             i++;
         }
         tmp = tmp->next;
@@ -404,6 +422,10 @@ void free_ast(t_ast_node *ast)
             free(ast->args[i]);
         free(ast->args);
     }
+    
+    // Free quote types array
+    if (ast->arg_quote_types)
+        free(ast->arg_quote_types);
     
     // Free redirections
     t_redirect *redir = ast->redirects;
