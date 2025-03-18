@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohaben- <mohaben-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/03 12:14:55 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/15 11:06:47 by mohaben-         ###   ########.fr       */
+/*   Created: 2025/03/17 14:09:25 by mohaben-          #+#    #+#             */
+/*   Updated: 2025/03/17 14:33:54 by mohaben-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,12 +105,12 @@ char	**ft_split(char *s, char c)
 	char	**arr;
 
 	if (s == NULL)
-		p_error("Malloc error", 1);
+		ft_error("Malloc error", 1);
 	arr = malloc((count_words(s, c) + 1) * sizeof(char *));
 	if (arr == NULL)
-		p_error("Malloc error", 1);
+		ft_error("Malloc error", 1);
 	arr = ft_fill(arr, s, c);
 	if (arr == NULL)
-		p_error("Malloc error", 1);
+		ft_error("Malloc error", 1);
 	return (arr);
 }

@@ -71,22 +71,31 @@ void print_tokens(t_token_node *tokens)
     }
 }
 
-
+void	ft_init_exec(t_exec	*exec, t_ast_node *ast, t_env **env, char **envp)
+{
+	exec->env = env;
+	exec->ast = ast;
+	exec->envp = envp;
+	exec->std_fd[0] = -1;
+	exec->std_fd[1] = -1;
+}
 
 int main(int ac, char **av, char **envp)
 {
-	char	*input;
-	int		pid;
-	int		exit_status;
-	int		status;
-	t_env	*env;
+	t_token_node	*tokens;
+	t_ast_node		*ast;
+	t_env			*env;
+	t_exec			exec;
+	char			*input;
+	// int				pid;
+	// int				status;
 
 	(void)ac;
 	(void)av;
-	exit_status = 0;
-	env = ft_init_env(envp);
 	signal(SIGINT, ft_handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
+	env = ft_init_env(envp);
+	exec.exit_status = 0;
 	rl_catch_signals = 0;
 	while (1)
 	{
@@ -110,52 +119,54 @@ int main(int ac, char **av, char **envp)
 			free(input);
 			continue;
 		}
-		if (!ft_strncmp(input, "exit", 4))
-			ft_exit(input, &exit_status);
-		t_token_node *tokens = ft_tokenize(input);
-		if (tokens)
-			print_tokens(tokens);
-        t_ast_node *ast = build_ast(tokens);
-        if (ast)
-        {
-            printf("AST Structure:\n");
-            print_ast(ast, 0);
-		}
-		else if (!ft_strncmp(input, "echo $?", 7))
-			printf("%d\n", exit_status);
-		else if (!ft_strncmp(input, "echo", 4))
-			ft_echo(input);
-		else if (!ft_strncmp(input, "cd", 2))
-			ft_cd(input, env, &exit_status);
-		else if (!ft_strncmp(input, "export", 6))
-			ft_export(input, &env);
-		else if (!ft_strncmp(input, "unset", 5))
-			ft_unset(input, &env);
-		else if (!ft_strncmp(input, "env", 3))
-			ft_print_env(env);
-		else if (!ft_strncmp(input, "pwd", 3))
-			ft_pwd(env);
-		else
-		{
-			pid = fork();
-			if (pid == 0)
-			{
-				ft_exec_cmd(input, env);
-			}
-			else if (pid > 0)
-			{
-				waitpid(pid, &status, 0);
-				if (WIFEXITED(status))
-					exit_status = WEXITSTATUS(status);
-				else
-					exit_status = 1;
-			}
-			else
-			{
-				write(2, "Fork error\n", 11);
-				exit_status = 1;
-			}
-		}
+		tokens = ft_tokenize(input);
+		ast = build_ast(tokens);
+		ft_init_exec(&exec, ast, &env, envp);
+		execute_ast(ast, &exec);
+		// if (tokens)
+		// 	print_tokens(tokens);
+        // if (ast)
+        // {
+        //     printf("AST Structure:\n");
+        //     print_ast(ast, 0);
+		// }
+		// if (!ft_strncmp(input, "exit", 4))
+		// 	ft_exit(input, &exec);
+		// else if (!ft_strncmp(input, "echo $?", 7))
+		// 	printf("%d\n", exec.exit_status);
+		// else if (!ft_strncmp(input, "echo", 4))
+		// 	ft_echo(input, &exec);
+		// else if (!ft_strncmp(input, "cd", 2))
+		// 	ft_cd(input, &exec);
+		// else if (!ft_strncmp(input, "export", 6))
+		// 	ft_export(input, &exec);
+		// else if (!ft_strncmp(input, "unset", 5))
+		// 	ft_unset(input, &exec);
+		// else if (!ft_strncmp(input, "env", 3))
+		// 	ft_env(*(exec.env));
+		// else if (!ft_strncmp(input, "pwd", 3))
+		// 	ft_pwd(&exec);
+		// else
+		// {
+		// 	pid = fork();
+		// 	if (pid == 0)
+		// 	{
+		// 		ft_exec_cmd(input, *(exec.env));
+		// 	}
+		// 	else if (pid > 0)
+		// 	{
+		// 		waitpid(pid, &status, 0);
+		// 		if (WIFEXITED(status))
+		// 			exec.exit_status = WEXITSTATUS(status);
+		// 		else
+		// 			exec.exit_status = 1;
+		// 	}
+		// 	else
+		// 	{
+		// 		write(2, "Fork error\n", 11);
+		// 		exec.exit_status = 1;
+		// 	}
+		// }
 		free(input);
 	}
 	return (0);
