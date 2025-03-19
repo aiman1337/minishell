@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 12:40:09 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/15 14:28:42 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/19 13:29:57 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,10 @@
 void	ft_add_token(t_token_node **head, t_token_node **current, t_token_type type, char *data)
 {
 	t_token_node	*new_token;
+
+	// Don't add empty strings for token_cmd type
+    if (type == token_cmd && (!data || !data[0]))
+        return;
 
 	new_token = malloc(sizeof(t_token_node));
 	if (!new_token)

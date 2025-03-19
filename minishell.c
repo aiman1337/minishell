@@ -65,7 +65,7 @@ void print_tokens(t_token_node *tokens)
     while (current != NULL)
     {
         print_token_type(current->type);
-        printf("%s\n", current->data);
+        printf("|%s|\n", current->data);
         current = current->next;
     }
 }
@@ -114,23 +114,12 @@ int main(int ac, char **av, char **envp)
 		t_token_node *tokens = ft_tokenize(input);
 		if (tokens)
 			print_tokens(tokens);
-        t_ast_node *ast = build_ast(tokens);
+        // t_ast_node *ast = build_ast(tokens);
         // if (ast)
         // {
         //     printf("AST Structure:\n");
         //     print_ast(ast, 0);
 		// }
-		int i = 0;
-	while (ast->args[i])
-	{
-    	if (ast->arg_quote_types[i] == AST_DQUOTES)
-        	printf("-\"%s\" (double quoted)-\n", ast->args[i]);
-    	else if (ast->arg_quote_types[i] == AST_SQUOTES)
-        	printf("-'%s' (single quoted)-\n", ast->args[i]);
-    	else
-        	printf("-%s-\n", ast->args[i]);
-    	i++;
-	}
 		// else if (!ft_strncmp(input, "echo $?", 7))
 		// 	printf("%d\n", exit_status);
 		// else if (!ft_strncmp(input, "echo", 4))
