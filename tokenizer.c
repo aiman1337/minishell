@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 12:40:09 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/19 13:29:57 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/19 16:10:22 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,9 +143,10 @@ void	ft_valid_parentesis(t_token_node *list, int *error)
 {
 	int				paren_count;
 	t_token_node	*head;
-	
 	paren_count = 0;
 	head = list;
+	write(2, "yes\n", 4);
+
 	while (list)
 	{
 		if (list->type == token_paren_open && !list->next)
@@ -173,7 +174,7 @@ void	ft_valid_parentesis(t_token_node *list, int *error)
 			}
 			
 		}
-		else if (list->type == token_paren_open && list->next && is_operator(*(list->next->data)))
+		else if (list->type == token_paren_open && list->next && is_operator(*(list->next->data)) && *list->next->data != '<' && *list->next->data != '>')
 		{
 			// write(2, "parentesis yes\n", 15);
 			write(2, "syntax error near unexpected token `", 37);
@@ -288,14 +289,13 @@ void	ft_consecutive_operators(t_token_node *list, int *error)
 	head = list;
 	while (list->next)
 	{
-		
 		if (*(list->data) == '(' && *(list->next->data) == ')' && !list->next->next && ft_before_this_token(head, list))
 		{
 			write(2, "syntax error near unexpected token `)'\n", 39);
 			*error = 1;
 			return ;
 		}
-		if (*(list->data) == '(' && is_operator(*(list->next->data)))
+		if (*(list->data) == '(' && is_operator(*(list->next->data)) && *list->next->data != '<' && *list->next->data != '>')
 		{
 			write(2, "syntax error near unexpected token `(\n`", 39);
 			*error = 1;
