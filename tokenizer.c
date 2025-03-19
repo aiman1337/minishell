@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 12:40:09 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/19 16:10:22 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/19 16:54:39 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,6 @@ void	ft_valid_parentesis(t_token_node *list, int *error)
 	t_token_node	*head;
 	paren_count = 0;
 	head = list;
-	write(2, "yes\n", 4);
 
 	while (list)
 	{
@@ -183,7 +182,7 @@ void	ft_valid_parentesis(t_token_node *list, int *error)
 			*error = 1;
 			return ;
 		}
-		else if (list->type == token_paren_open && list->next && ft_before_this_token(head, list) && !is_operator(*ft_before_this_token(head, list)->data))
+		else if (list->type == token_paren_open && list->next && ft_before_this_token(head, list) && !is_operator(*ft_before_this_token(head, list)->data) && !is_parentesis(*ft_before_this_token(head, list)->data))
 		{
 			if (ft_before_this_token(head, ft_before_this_token(head, list)))
 			{
