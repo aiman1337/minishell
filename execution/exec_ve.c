@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fork.c                                             :+:      :+:    :+:   */
+/*   exec_ve.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mohaben- <mohaben-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/16 12:29:27 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/16 14:07:05 by mohaben-         ###   ########.fr       */
+/*   Created: 2025/03/18 16:29:44 by mohaben-          #+#    #+#             */
+/*   Updated: 2025/03/19 12:05:26 by mohaben-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 char	*ft_get_path(char **envp)
 {
@@ -89,31 +89,68 @@ char	**ft_set_envp(t_env *env)
 	return (envp);
 }
 
-void	ft_exec_cmd(char *cmd, t_env *env)
+// void	ft_exec_ve(char *cmd, t_env *env)
+// {
+// 	char	**cmd_splited;
+// 	char	**paths;
+// 	char	*path;
+// 	char	*cmd_path;
+// 	char	**envp;
+// 	int		i;
+
+// 	signal(SIGQUIT, SIG_DFL);
+// 	envp = ft_set_envp(env);
+// 	cmd_splited = ft_split(cmd, ' ');
+// 	if (cmd_splited[0] && !access(cmd_splited[0], X_OK))
+// 		execve(cmd_splited[0], cmd_splited, envp);
+// 	path = ft_get_path(envp);
+// 	paths = ft_split(path, ':');
+// 	i = -1;
+// 	while (paths[++i] && cmd[0] != '.')
+// 	{
+// 		path = ft_strjoin(paths[i], "/");
+// 		cmd_path = ft_strjoin(path, cmd_splited[0]);
+// 		free(path);
+// 		if (cmd_path && !access(cmd_path, X_OK))
+// 			execve(cmd_path, cmd_splited, envp);
+// 		free(cmd_path);
+// 	}
+// 	ft_error_cmd(cmd_splited, paths, 127);
+// }
+
+void	print_arg(char **args)
 {
-	char	**cmd_splited;
+	int	i;
+
+	i = -1;
+	while (args[++i])
+		printf("@%s@\n", args[i]);
+}
+
+void	ft_exec_ve(t_ast_node *node, t_exec *exec)
+{
 	char	**paths;
 	char	*path;
 	char	*cmd_path;
 	char	**envp;
 	int		i;
 
+	print_arg(node->args);
 	signal(SIGQUIT, SIG_DFL);
-	envp = ft_set_envp(env);
-	cmd_splited = ft_split(cmd, ' ');
-	if (cmd_splited[0] && !access(cmd_splited[0], X_OK))
-		execve(cmd_splited[0], cmd_splited, envp);
+	envp = ft_set_envp(*(exec->env));
+	if (node->args[0] && !access(node->args[0], X_OK))
+		execve(node->args[0], node->args, envp);
 	path = ft_get_path(envp);
 	paths = ft_split(path, ':');
 	i = -1;
-	while (paths[++i] && cmd[0] != '.')
+	while (paths[++i] && node->args[0][0] != '.')
 	{
 		path = ft_strjoin(paths[i], "/");
-		cmd_path = ft_strjoin(path, cmd_splited[0]);
+		cmd_path = ft_strjoin(path, node->args[0]);
 		free(path);
 		if (cmd_path && !access(cmd_path, X_OK))
-			execve(cmd_path, cmd_splited, envp);
+			execve(cmd_path, node->args, envp);
 		free(cmd_path);
 	}
-	ft_error_cmd(cmd_splited, paths, 127);
+	ft_error_cmd(node->args[0], paths, 127);
 }
