@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 12:33:01 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/17 14:52:52 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/20 14:16:52 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ typedef struct s_redirect
 {
     int type;              // token_in, token_out, token_hrdc, token_appnd
     char *file;            // Filename or delimiter
+	int	quoted;
     struct s_redirect *next;
 } t_redirect;
 
@@ -84,7 +85,7 @@ typedef struct s_ast_node
         AST_AND_AND,       // && operator
         AST_OR_OR,         // || operator
         AST_SUBSHELL,	   // Commands in parentheses
-		AST_DQUOTES,       // Double quoted string
+        AST_DQUOTES,       // Double quoted string
         AST_SQUOTES        // Single quoted string
     } type;
     

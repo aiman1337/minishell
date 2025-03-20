@@ -114,12 +114,12 @@ int main(int ac, char **av, char **envp)
 		t_token_node *tokens = ft_tokenize(input);
 		if (tokens)
 			print_tokens(tokens);
-        // t_ast_node *ast = build_ast(tokens);
-        // if (ast)
-        // {
-        //     printf("AST Structure:\n");
-        //     print_ast(ast, 0);
-		// }
+        t_ast_node *ast = build_ast(tokens);
+        if (ast)
+        {
+            printf("AST Structure:\n");
+            print_ast(ast, 0);
+		}
 		// else if (!ft_strncmp(input, "echo $?", 7))
 		// 	printf("%d\n", exit_status);
 		// else if (!ft_strncmp(input, "echo", 4))

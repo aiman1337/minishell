@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:58:14 by ahouass           #+#    #+#             */
-/*   Updated: 2025/03/19 14:18:34 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/20 14:18:00 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,7 @@ t_ast_node *create_ast_node(int type)
     node->type = type;
     node->args = NULL;
     node->arg_count = 0;
-    node->arg_quote_types = NULL;  // Initialize new field
+    node->arg_quote_types = NULL;
     node->redirects = NULL;
     node->left = NULL;
     node->right = NULL;
@@ -284,6 +284,10 @@ t_redirect *parse_redirections(t_token_node **tokens)
             
             redir->type = tmp->type;
             redir->file = strdup(tmp->next->data);
+            if (tmp->next->type == token_dquote || tmp->next->type == token_squote)
+                redir->next->quoted = 1;
+            else
+                redir->next->quoted = 0;
             redir->next = NULL;
             
             // Add to redirection list
