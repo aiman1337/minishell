@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:58:14 by ahouass           #+#    #+#             */
-/*   Updated: 2025/03/20 14:18:00 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/20 15:03:31 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ t_ast_node *parse_pipes(t_token_node *tokens)
         
         // Recursively parse both sides
         node->left = parse_pipes(left_tokens);
-        node->right = parse_pipes(right_tokens); 
+        node->right = parse_pipes(right_tokens);
         
         return node;
     }
@@ -285,9 +285,9 @@ t_redirect *parse_redirections(t_token_node **tokens)
             redir->type = tmp->type;
             redir->file = strdup(tmp->next->data);
             if (tmp->next->type == token_dquote || tmp->next->type == token_squote)
-                redir->next->quoted = 1;
+                redir->quoted = 1;
             else
-                redir->next->quoted = 0;
+                redir->quoted = 0;
             redir->next = NULL;
             
             // Add to redirection list
