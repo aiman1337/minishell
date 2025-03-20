@@ -84,42 +84,45 @@ int main(int ac, char **av, char **envp)
 	(void)av;
 	exit_status = 0;
 	env = ft_init_env(envp);
-	signal(SIGINT, ft_handle_sigint);
-	signal(SIGQUIT, SIG_IGN);
+	// signal(SIGINT, ft_handle_sigint);
+	// signal(SIGQUIT, SIG_IGN);
 	// rl_catch_signals = 0;
 	while (1)
 	{
-		input = readline("\033[1;32mminishell> \033[0m");
-		if (input && *input)
-			add_history(input);
+		input = readline("minishell> ");
+		// input = readline("\x1b[32mmini\x1b[32mshell> \x1b[0m\x1b[0m");
 		if (!input)
-		{
-			ft_putstr_fd("exit\n", 1);
-			clear_history();
-			exit(0);
-		}
-		if (input[0] == '\f' && input[1] == '\0')
-		{
-			ft_clear_screen();
-			free(input);
-			continue;
-		}
-		if (input[0] == '\0')
-		{
-			free(input);
-			continue;
-		}
+    	{
+        	ft_putstr_fd("exit\n", 1);
+        	clear_history();
+        	exit(0);
+    	}
+
+    	// Only add non-empty input to history
+    	if (*input)
+    	{
+        	add_history(input);
+    	}
+
+    	// Process the input
+    	if (!ft_strncmp(input, "exit", 4))
+    	{
+        	ft_exit(input, &exit_status);
+    	}
 		if (!ft_strncmp(input, "exit", 4))
 			ft_exit(input, &exit_status);
 		t_token_node *tokens = ft_tokenize(input);
-		if (tokens)
-			print_tokens(tokens);
+		(void)tokens;
+		// if (tokens)
+		// 	print_tokens(tokens);
         t_ast_node *ast = build_ast(tokens);
+		(void)ast;
         if (ast)
         {
             printf("AST Structure:\n");
             print_ast(ast, 0);
 		}
+		// printf("%s\n", ast->child->args[0]);
 		// else if (!ft_strncmp(input, "echo $?", 7))
 		// 	printf("%d\n", exit_status);
 		// else if (!ft_strncmp(input, "echo", 4))

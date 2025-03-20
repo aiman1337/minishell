@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:58:14 by ahouass           #+#    #+#             */
-/*   Updated: 2025/03/20 15:03:31 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/20 19:29:33 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -393,32 +393,15 @@ char **collect_args(t_token_node *tokens, int count, int **quote_types)
     return args;
 }
 
-/* Get the length of a token list */
-int token_list_len(t_token_node *tokens)
-{
-    int len = 0;
-    t_token_node *tmp = tokens;
-    
-    while (tmp)
-    {
-        len++;
-        tmp = tmp->next;
-    }
-    
-    return len;
-}
-
 /* Free the AST recursively */
 void free_ast(t_ast_node *ast)
 {
     if (!ast)
         return;
-    
     // Free child nodes
     free_ast(ast->left);
     free_ast(ast->right);
     free_ast(ast->child);
-    
     // Free arguments
     if (ast->args)
     {
@@ -426,11 +409,9 @@ void free_ast(t_ast_node *ast)
             free(ast->args[i]);
         free(ast->args);
     }
-    
     // Free quote types array
     if (ast->arg_quote_types)
         free(ast->arg_quote_types);
-    
     // Free redirections
     t_redirect *redir = ast->redirects;
     while (redir)
@@ -440,7 +421,6 @@ void free_ast(t_ast_node *ast)
         free(redir);
         redir = next;
     }
-    
     // Free the node itself
     free(ast);
 }

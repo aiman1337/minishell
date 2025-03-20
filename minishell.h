@@ -6,7 +6,7 @@
 /*   By: ahouass <ahouass@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 12:33:01 by mohaben-          #+#    #+#             */
-/*   Updated: 2025/03/20 14:16:52 by ahouass          ###   ########.fr       */
+/*   Updated: 2025/03/20 15:42:24 by ahouass          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,6 @@ t_redirect *parse_redirections(t_token_node **tokens);
 void free_ast(t_ast_node *ast);
 int is_redirection(t_token_type type);
 int count_args(t_token_node *tokens);
-int token_list_len(t_token_node *tokens);
 char **collect_args(t_token_node *tokens, int count, int **quote_types);
 void print_ast(t_ast_node *ast, int indent_level);
 
